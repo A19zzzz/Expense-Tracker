@@ -18,3 +18,17 @@
 ```bash
 git clone https://github.com/你的用户名/my-ai-project.git
 cd my-ai-project
+
+把这段内容保存为 `README.md`，上传到仓库根目录。GitHub 会自动把它显示在仓库首页。
+
+---
+
+## 二、让人装得上：降低使用门槛
+
+### 1. 添加 `requirements.txt`
+
+虽然你的程序只用标准库，但加一个空文件也能告诉别人“不需要额外安装”：
+
+```bash
+# requirements.txt
+# 本项目只使用 Python 标准库，无需额外依赖
