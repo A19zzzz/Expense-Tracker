@@ -1,4 +1,9 @@
+records.json
 expenses.json
 expenses.csv
 __pycache__/
 *.pyc
+.streamlit/secrets.toml
+build/
+dist/
+*.spec
