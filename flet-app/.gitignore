@@ -1,0 +1,4 @@
+expenses.db
+build/
+__pycache__/
+*.pyc
