@@ -22,6 +22,13 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: 安装 Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: 'stable'
+          cache: true
+
       - name: 安装 Python
         uses: actions/setup-python@v5
         with:
@@ -32,21 +39,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install "flet[all]==1.0.1"
 
-      - name: 缓存 Flutter SDK
-        uses: actions/cache@v4
-        with:
-          path: ~/flutter
-          key: flutter-sdk-${{ runner.os }}-3.44.8
-          restore-keys: |
-            flutter-sdk-${{ runner.os }}-
+      - name: 接受 Android 许可
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          yes | flutter doctor --android-licenses || true
 
       - name: 构建 APK
         working-directory: flet-app
         run: |
           flet build apk \
-            --project "极简记账" \
+            --project jijizhang \
+            --product "极简记账" \
             --org com.example.jijizhang \
-            --yes \
+            --build-version 1.0.0 \
+            --build-number 1 \
             -v
 
       - name: 上传 APK
