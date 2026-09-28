@@ -1,0 +1,55 @@
+name: Build APK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'flet-app/**'
+      - '.github/workflows/build-apk.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 安装 Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: 'stable'
+          cache: true
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 安装 Flet
+        run: |
+          python -m pip install --upgrade pip
+          pip install "flet[all]"
+
+      - name: 接受 Android 许可
+        run: yes | flutter doctor --android-licenses || true
+
+      - name: 构建 APK
+        working-directory: flet-app
+        run: |
+          flet build apk --project "极简记账" --org com.example.jijizhang -v
+
+      - name: 上传 APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: 极简记账-apk
+          path: flet-app/build/apk/*.apk
+          if-no-files-found: error
