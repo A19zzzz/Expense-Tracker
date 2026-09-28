@@ -3,9 +3,6 @@ name: Build APK
 on:
   push:
     branches: [main]
-    paths:
-      - 'flet-app/**'
-      - '.github/workflows/build-apk.yml'
   workflow_dispatch:
 
 jobs:
@@ -24,27 +21,25 @@ jobs:
           df -h
 
       - name: 删除本地数据库
-        run: |
-          rm -f flet-app/expenses.db
-          rm -f flet-app/expenses.db-journal
+        run: rm -f flet-app/expenses.db
 
       - name: 安装 Java 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: temurin
+          java-version: "17"
 
       - name: 安装 Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.44.8'
-          channel: 'stable'
+          flutter-version: "3.44.8"
+          channel: stable
           cache: true
 
       - name: 安装 Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: 安装 Flet
         run: |
@@ -56,26 +51,21 @@ jobs:
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
           yes | flutter doctor --android-licenses || true
 
-               - name: 构建 APK（拆分架构）
+      - name: 构建 APK
         working-directory: flet-app
-        run: |
-          flet build apk \
-            --project jijizhang \
-            --product "极简记账" \
-            --org com.example.jijizhang \
-            --split-per-abi \
-            --build-version 1.0.0 \
-            --build-number 1 \
-            --yes \
-            -v
+        run: flet build apk --project jijizhang --product "极简记账" --org com.example.jijizhang --split-per-abi --build-version 1.0.0 --build-number 1 --yes -v
 
-      - name: 显示 APK 体积
+      - name: 只保留 arm64-v8a
         run: |
-          ls -lh flet-app/build/apk/
+          cd flet-app/build/apk/
+          ls -la
+          find . -name "*.apk" ! -name "*arm64-v8a*" -delete
+          echo "--- 保留的文件 ---"
+          ls -la
 
       - name: 上传 APK
         uses: actions/upload-artifact@v4
         with:
-          name: 极简记账-apk
+          name: 极简记账-arm64
           path: flet-app/build/apk/*.apk
           if-no-files-found: error
