@@ -1,4 +1,5 @@
 expenses.db
+expenses.db-journal
 build/
 __pycache__/
 *.pyc
