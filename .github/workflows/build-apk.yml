@@ -56,14 +56,14 @@ jobs:
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
           yes | flutter doctor --android-licenses || true
 
-      - name: 构建 APK（仅 arm64-v8a）
+               - name: 构建 APK（拆分架构）
         working-directory: flet-app
         run: |
           flet build apk \
             --project jijizhang \
             --product "极简记账" \
             --org com.example.jijizhang \
-            --arch arm64-v8a \
+            --split-per-abi \
             --build-version 1.0.0 \
             --build-number 1 \
             --yes \
